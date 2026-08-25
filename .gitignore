@@ -21,6 +21,14 @@ htmlcov/
 # Generated local vector database
 chroma_db/
 
+# Optional CLI, experiments, and local sample documents
+create-db.py
+main.py
+test_*.py
+Document_Loaders/
+Retrievers/
+VectorStore/
+
 # Local logs and OS/editor files
 *.log
 .DS_Store

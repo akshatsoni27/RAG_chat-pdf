@@ -13,7 +13,6 @@ The project uses Mistral for embeddings and question answering, Chroma for vecto
 - Answer questions with `mistral-small-2506`
 - Refuse to invent answers when the document does not contain the information
 - Display source page numbers for each answer
-- Optional command-line workflow for the included sample PDF
 - Local secrets and generated vector data excluded from Git
 
 ## How It Works
@@ -98,39 +97,14 @@ Then:
 
 Each uploaded file is identified by its content hash. Re-uploading the same file during a session does not rebuild its index unnecessarily.
 
-## Run the Command-Line Version
-
-The included sample PDF is located at `Document_Loaders/deeplearning.pdf`.
-
-Build its local Chroma index:
-
-```bash
-python create-db.py
-```
-
-Start the interactive CLI:
-
-```bash
-python main.py
-```
-
-Type `0` to exit.
-
-> Note: `main.py` rebuilds the sample index when it starts. The Streamlit application is the recommended workflow for uploading and querying your own PDFs.
-
 ## Project Structure
 
 ```text
 .
 ├── app.py                     # Streamlit upload and chat interface
-├── rag.py                     # Shared loading, indexing, retrieval, and QA logic
-├── create-db.py               # Indexes the included sample PDF
-├── main.py                    # Command-line question-answering interface
+├── rag.py                     # PDF loading, indexing, retrieval, and QA logic
 ├── requirements.txt           # Python dependencies
-├── Document_Loaders/
-│   └── deeplearning.pdf       # Included sample document
-├── chroma_db/                 # Local generated index, ignored by Git
-├── .env                       # Local API key, ignored by Git
+├── README.md                  # Setup and usage instructions
 └── .gitignore
 ```
 
@@ -165,23 +139,11 @@ MISTRAL_API_KEY=your_mistral_api_key
 
 Restart Streamlit after changing environment variables.
 
-### PDF not found
-
-Run commands from the repository root, where `create-db.py` expects:
-
-```text
-Document_Loaders/deeplearning.pdf
-```
-
 ### Rebuild the local index
 
-Delete the generated `chroma_db` directory and run:
+The Streamlit app creates an in-memory index for each uploaded PDF. Restart the app to clear its current session.
 
-```bash
-python create-db.py
-```
-
-The directory is generated locally and is intentionally ignored by Git.
+Any local `chroma_db` directory from previous experiments is generated data and is intentionally ignored by Git.
 
 ## Security
 
@@ -191,4 +153,8 @@ The directory is generated locally and is intentionally ignored by Git.
 
 ## License
 
-Add the license that applies to your project before publishing this repository.
+This project is not currently licensed. All rights are reserved by the copyright holder.
+
+Before publishing, add a `LICENSE` file with the license you choose. Without a license,
+others generally may not use, modify, or distribute this code beyond what copyright law
+allows.
