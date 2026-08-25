@@ -1,31 +1,10 @@
-#load pdf 
-#split into chunks 
-#create the embeddings 
-#store into chroma 
-from langchain_community.document_loaders import PyPDFLoader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from langchain_community.vectorstores import Chroma 
-from dotenv import load_dotenv
+from pathlib import Path
 
-load_dotenv()
+from rag import create_vectorstore, load_pdf
 
-data = PyPDFLoader("document_Loaders/deeplearning.pdf")
-docs = data.load()
 
-splitter = RecursiveCharacterTextSplitter(
-    chunk_size = 1000,
-    chunk_overlap = 200
-)
+pdf_path = Path("Document_Loaders/deeplearning.pdf")
+chunks = load_pdf(pdf_path)
+create_vectorstore(chunks, persist_directory="chroma_db")
 
-chunks = splitter.split_documents(docs)
-
-embedding_model = GoogleGenerativeAIEmbeddings(
-    model="gemini-embedding-001"
-)
-
-vectorstore = Chroma.from_documents(
-    documents= chunks,
-    embedding=embedding_model,
-    persist_directory="chroma_db"
-)
+print(f"Indexed {len(chunks)} chunks from {pdf_path}.")

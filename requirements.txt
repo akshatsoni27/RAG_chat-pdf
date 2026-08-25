@@ -4,9 +4,8 @@ langchain-community
 langgraph
 langchain-groq
 langchain-mistralai
-langchain-huggingface
+langchain-chroma
 chromadb
-sentence-transformers
 pypdf
 python-docx
 unstructured
@@ -17,3 +16,4 @@ numpy
 pandas
 fastapi
 uvicorn
+streamlit

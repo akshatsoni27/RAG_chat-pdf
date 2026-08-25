@@ -1,44 +1,21 @@
-from dotenv import load_dotenv
+from pathlib import Path
 
-from langchain_mistralai import ChatMistralAI
-from langchain_community.document_loaders import PyPDFLoader
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+from rag import answer_question, create_vectorstore, load_pdf
 
-load_dotenv()
 
-# Load PDF
-loader = PyPDFLoader("Document_Loaders/Deeplearn.pdf")
-docs = loader.load()
+chunks = load_pdf(Path("Document_Loaders/deeplearning.pdf"))
+vectorstore = create_vectorstore(chunks, persist_directory="chroma_db")
 
-print("Pages:", len(docs))
+print(f"RAG system ready with {len(chunks)} chunks. Type 0 to exit.")
+while True:
+    question = input("You: ").strip()
+    if question == "0":
+        break
+    if not question:
+        continue
 
-# Split documents
-splitter = RecursiveCharacterTextSplitter(
-    chunk_size=1000,
-    chunk_overlap=0
-)
-
-chunks = splitter.split_documents(docs)
-
-print("Chunks:", len(chunks))
-
-# Prompt
-template = ChatPromptTemplate.from_messages([
-    ("system", "You are an AI that summarizes text."),
-    ("human", "Summarize the following text:\n\n{data}")
-])
-
-# Mistral model
-model = ChatMistralAI(
-    model="mistral-small-2506"
-)
-
-# Test with first chunk
-prompt = template.format_messages(
-    data=chunks[0].page_content
-)
-
-result = model.invoke(prompt)
-
-print(result.content)
+    answer, sources = answer_question(vectorstore, question)
+    print(f"\nAI: {answer}\n")
+    print("Sources:")
+    for source in sources:
+        print(f"- page {source.metadata.get('page', 0) + 1}")
